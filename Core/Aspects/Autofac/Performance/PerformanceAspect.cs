@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Core.Aspects.Autofac.Perfprmance
+namespace Core.Aspects.Autofac.Performance
 {
     public class PerformanceAspect : MethodInterception
     {
