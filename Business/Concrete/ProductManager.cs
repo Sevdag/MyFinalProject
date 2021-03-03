@@ -2,6 +2,9 @@
 using Business.BusinessAspects.Autofac;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Perfprmance;
+using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
@@ -30,8 +33,9 @@ namespace Business.Concrete
         //Encryption -
         //Hashing - Veriyi farklı şekilde kaydeder
         //Salting - Kullanıcının girdiği parolayı biz biraz daha güçlendiriyoruz
-        [SecuredOperation("product.add, admin")]
+        [SecuredOperation("product.add,admin")]
         [ValidationAspect(typeof(ProductValidator))]
+        [CacheRemoveAspect("IProductService.Get")]
         public IResult Add(Product product)
         {
             //Aynı isimde ürün eklenemez
@@ -48,7 +52,7 @@ namespace Business.Concrete
             return new SuccessResult(Messages.ProductAdded);
 
         }
-
+        [CacheAspect]  //key, value
         public IDataResult<List<Product>> GetAll()
         {
             // iş kodları
@@ -62,6 +66,8 @@ namespace Business.Concrete
             return new SuccessDataResult<List<Product>>(_productDal.GetAll(p => p.CategoryId == id));
         }
 
+        [CacheAspect]
+        [PerformanceAspect(5)]
         public IDataResult<Product> GetById(int productId)
         {
             return new SuccessDataResult<Product>(_productDal.Get(p => p.ProductId == productId));
@@ -83,6 +89,7 @@ namespace Business.Concrete
             return new SuccessDataResult<List<ProductDetailDto>>(_productDal.GetProductDetails());
         }
         [ValidationAspect(typeof(ProductValidator))]
+        [CacheRemoveAspect("IProductService.Get")]
         public IResult Update(Product product)
         {
             var result = _productDal.GetAll(p => p.CategoryId == product.CategoryId).Count;
@@ -125,5 +132,10 @@ namespace Business.Concrete
             return new SuccessResult();
         }
 
+        [TransactionScopeAspect]
+        public IResult AddTransactionalTest(Product product)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

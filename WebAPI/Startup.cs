@@ -1,3 +1,5 @@
+using Core.DependencyResolvers;
+using Core.Extensions;
 using Core.Security.Encryption;
 using Core.Utilities.IoC;
 using Core.Utilities.Security.JWT;
@@ -29,7 +31,7 @@ namespace WebAPI
             //AOP - Bir metodun baþýnda, sonunda ve içinde hata veren 
             //Postsharp
             services.AddControllers();
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+          
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowOrigin",
@@ -52,7 +54,9 @@ namespace WebAPI
                         IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey)
                     };
                 });
-            ServiceTool.Create(services);
+            services.AddDependencyResolvers(new ICoreModule[] {
+            new CoreModule()
+            });
 
             //    services.AddSingleton<IProductService, ProductManager>();
             //    services.AddSingleton<IProductDal, EFProductDal>();
