@@ -33,7 +33,7 @@ namespace Business.Concrete
         //Encryption -
         //Hashing - Veriyi farklı şekilde kaydeder
         //Salting - Kullanıcının girdiği parolayı biz biraz daha güçlendiriyoruz
-        [SecuredOperation("product.add,admin")]
+        //[SecuredOperation("product.add,admin")]
         [ValidationAspect(typeof(ProductValidator))]
         [CacheRemoveAspect("IProductService.Get")]
         public IResult Add(Product product)
